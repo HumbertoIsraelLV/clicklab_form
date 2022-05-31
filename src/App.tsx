@@ -88,7 +88,7 @@ const App = () => {
           </div>
           <div className="col-sm-6 col-lg-4">
             <Textfield 
-              name={'phone'} 
+              name={'cellphone'} 
               label={'Teléfono móvil'} 
               placeholder={''} 
               type={'text'} 
@@ -97,7 +97,7 @@ const App = () => {
           </div>
           <div className="col-sm-6 col-lg-4">
             <Textfield 
-              name={'celphone'} 
+              name={'phone'} 
               label={'Teléfono fijo'} 
               placeholder={''} 
               type={'text'} 
