@@ -10,12 +10,14 @@
 }
 body {
   background-image: url('assets/img/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
   font-family:Arial, Helvetica, sans-serif;
   font-weight: 600;
 }
 .logo {
   width: 12rem;
-  margin: 1rem;
+  margin: 1rem 0;
   padding: 1rem;
   background-color: var(--white);
 }
@@ -49,6 +51,13 @@ body {
   background-color: var(--accent-orange);
   color: var(--white);
 }
+.form-error {
+  padding-left: 0.5rem;
+  background-color: rgba(218, 67, 67, 0.5);
+  font-weight: 100;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
 .btn-submit {
   width: 8rem;
   font-size: 1.3rem;
@@ -56,6 +65,7 @@ body {
   color: var(--white);
   border: none;
 }
+.btn-submit:focus,
 .btn-submit:hover {
   background-color: var(--dark-grey);
   color: var(--black);

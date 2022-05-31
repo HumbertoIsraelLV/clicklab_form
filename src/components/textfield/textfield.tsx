@@ -1,11 +1,10 @@
-import React, { Dispatch } from 'react';
-
 interface TextfieldInterface {
   name        : string;
   label       : string;
   placeholder : string;
   type        : string;
-  set         : Dispatch<any>;
+  set         : any;
+  errors      : any;     
 }
 
 const Textfield = (props:TextfieldInterface) => {
@@ -14,12 +13,25 @@ const Textfield = (props:TextfieldInterface) => {
       {/* <label htmlFor={props.name} className="form-label">{props.label}</label>
       <input type="email" className="form-control" id={props.name} placeholder={props.placeholder}/> */}
       <input 
+        onSubmit={()=>{
+          console.log('hey');
+        }}
         name={props.name}
         placeholder={props.label} 
-        onChange={props.set}
+        onChange={(event: any)=>{
+          props.set(event);
+        }}
         className="form-control" 
         type="text" 
       />
+      {
+        props.errors[props.name] &&
+        <div className="form-error rounded">
+          {props.errors[props.name]}
+        </div>
+      
+      }
+
     </>
   );
 }
