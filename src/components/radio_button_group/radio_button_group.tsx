@@ -8,6 +8,7 @@ interface RadioButtonGroupInterface {
   label       : string;
   options     : RadioButtonOptionInterface[];
   set         : any;
+  default     : string;
 }
 
 const RadioButtonGroup = (props:RadioButtonGroupInterface) => {
@@ -22,7 +23,7 @@ const RadioButtonGroup = (props:RadioButtonGroupInterface) => {
             name={props.name} 
             id={option.value} 
             onChange={props.set}
-            checked
+            defaultChecked={(props.default===option.value) ?true :false}
           />
           <label className="form-check-label" htmlFor={option.value}>
             {option.label}

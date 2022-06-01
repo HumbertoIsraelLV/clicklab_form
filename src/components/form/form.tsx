@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import axios from "axios";
 import validator from 'validator';
 
@@ -6,12 +6,11 @@ import Textfield from '../../components/textfield/textfield';
 import Select from '../../components/select/select';
 import RadioButtonGroup from '../../components/radio_button_group/radio_button_group';
 import { useForm } from '../../hooks/useForm';
+import { FormValuesInterface } from '../../interfaces/form';
 
 const Form = () => {
 
-  const [formErrors, setFormErrors] = useState({});
-
-  const [formValues, handleInputChange] = useForm({
+  const initFormValues: FormValuesInterface = {
     nombre: '',
     ciudad: '',
     delegacion: '',
@@ -23,9 +22,15 @@ const Form = () => {
     enterado: '',
     campaña: '',
     agente: '',
-    seguimiento: '',
+    seguimiento: 'false',
     comen: '',
-  });
+  };
+
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+
+  const [formErrors, setFormErrors] = useState<FormValuesInterface>({});
+
+  const [formValues, setFormValues, handleInputChange] = useForm(initFormValues);
 
   const {
     nombre,
@@ -38,7 +43,7 @@ const Form = () => {
     t_examen,
     enterado,
     campaña,
-    agente,
+    // agente,
     // seguimiento,
     // comen,
   }: any = formValues;
@@ -46,13 +51,17 @@ const Form = () => {
   const submitForm = (event: any) => {
     event.preventDefault();
     if(!isFormValid()) return;
-    // const isValid: boolean = isFormValid();
     sendFormData();
+    event.target.reset();    
+    submitButtonRef.current?.blur();
+    setFormValues(initFormValues);    
   }
 
   const isFormValid = () => {
+    
     var isValid: boolean = true;
     var errors:any = {};
+
     if(validator.isEmpty(nombre)){
       errors['nombre'] = 'nombre completo requerido';
       isValid = false;
@@ -72,10 +81,20 @@ const Form = () => {
     if(validator.isEmpty(movil)){
       errors['movil'] = 'teléfono móvil requerido';
       isValid = false;
+    }else{
+      if(!RegExp('^[0-9]{10}$').test(movil)){
+        errors['movil'] = 'ingresa un formato válido (10 digitos)';
+        isValid = false;
+      }
     }
     if(validator.isEmpty(fijo)){
-      errors['fijo'] = 'télefono fijo requerido';
+      errors['fijo'] = 'teléfono fijo requerido';
       isValid = false;
+    }else{
+      if(!RegExp('^[0-9]{10}$').test(fijo)){
+        errors['fijo'] = 'ingresa un formato válido (10 digitos)';
+        isValid = false;
+      }
     }
     if(validator.isEmpty(correo)){
       errors['correo'] = 'correo electrónico requerido';
@@ -98,12 +117,6 @@ const Form = () => {
       errors['campaña'] = 'campaña requerida';
       isValid = false;
     }
-    if(validator.isEmpty(agente)){
-      errors['agente'] = 'agente requerido';
-      isValid = false;
-    }
-
-    //@ts-ignore
     setFormErrors(errors);
     return isValid;
   }
@@ -112,7 +125,7 @@ const Form = () => {
     axios
       .post('http://elpuntoyseguido.com.mx:3006/capturardatos', formValues)
       .then((response) => {
-        alert(response);
+        alert('Formulario enviado');
         console.log(response);
         
       }).catch(error => {
@@ -127,9 +140,7 @@ const Form = () => {
         <div className="col-md-12">
         <Textfield 
             name={'nombre'} 
-            label={'Nombre completo'} 
-            placeholder={''} 
-            type={'text'}
+            placeholder={'Nombre completo'} 
             set={handleInputChange}
             errors={formErrors}
         />
@@ -137,9 +148,7 @@ const Form = () => {
         <div className="col-sm-6 col-lg-9">
         <Textfield 
             name={'ciudad'} 
-            label={'Ciudad'} 
-            placeholder={''} 
-            type={'text'} 
+            placeholder={'Ciudad'} 
             set={handleInputChange}
             errors={formErrors} 
         />
@@ -147,9 +156,7 @@ const Form = () => {
         <div className="col-sm-6 col-lg-3">
         <Textfield 
             name={'delegacion'} 
-            label={'Delegación'} 
-            placeholder={''} 
-            type={'text'} 
+            placeholder={'Delegación'} 
             set={handleInputChange} 
             errors={formErrors}
         />
@@ -157,9 +164,7 @@ const Form = () => {
         <div className="col-lg-4">
         <Textfield 
             name={'colonia'} 
-            label={'Alcaldía'} 
-            placeholder={''} 
-            type={'text'} 
+            placeholder={'Alcaldía'}
             set={handleInputChange} 
             errors={formErrors}
         />
@@ -167,19 +172,16 @@ const Form = () => {
         <div className="col-sm-6 col-lg-4">
         <Textfield 
             name={'movil'} 
-            label={'Teléfono móvil'} 
-            placeholder={''} 
-            type={'text'} 
+            placeholder={'Teléfono móvil'} 
             set={handleInputChange} 
             errors={formErrors}
+            type={'tel'}
         />
         </div>
         <div className="col-sm-6 col-lg-4">
         <Textfield 
             name={'fijo'} 
-            label={'Teléfono fijo'} 
-            placeholder={''} 
-            type={'text'} 
+            placeholder={'Teléfono fijo'} 
             set={handleInputChange} 
             errors={formErrors}
         />
@@ -187,9 +189,7 @@ const Form = () => {
         <div className="col-lg-4">
         <Textfield 
             name={'correo'} 
-            label={'Correo electrónico'} 
-            placeholder={''} 
-            type={'text'} 
+            placeholder={'Correo electrónico'} 
             set={handleInputChange} 
             errors={formErrors}
             />
@@ -206,6 +206,7 @@ const Form = () => {
             ]}            
             set={handleInputChange}
             errors={formErrors}
+            //Proof of concept for reactive validation 
             // validator={(event: any) => {
             //     if(validator.isEmpty(event.target.value)){
             //         //@ts-ignore
@@ -246,45 +247,42 @@ const Form = () => {
         </div>
         <div className="col-lg-4">
         <Select 
-            name={'agente'} 
-            label={'Agente'} 
-            options={[
-            'Agente 1',
-            'Agente 2',
-            ]}            
-            set={handleInputChange}
-            errors={formErrors}
+          name={'agente'} 
+          label={'Agente'} 
+          options={[
+          ]}            
+          set={handleInputChange}
+          errors={formErrors}
         />
         </div>
         <div className="col-lg-4">
         <RadioButtonGroup 
-            name={'seguimiento'} 
-            label={'¿Requiere seguimiento?'} 
-            options={[
-            {
-                value: 'yes',
-                label: 'Sí',  
-            },
-            {
-                value: 'no',
-                label: 'No',  
-            },
-            ]}            
-            set={handleInputChange} 
+          name={'seguimiento'}
+          default={'false'}
+          label={'¿Requiere seguimiento?'} 
+          options={[
+          {
+              value: 'true',
+              label: 'Sí',  
+          },
+          {
+              value: 'false',
+              label: 'No',  
+          },
+          ]}            
+          set={handleInputChange} 
         />
         </div>
         <div className="col-lg-12">
         <Textfield 
             name={'comen'} 
-            label={'Comentarios adicionales'} 
-            placeholder={''} 
-            type={'text'} 
+            placeholder={'Comentarios adicionales'} 
             set={handleInputChange} 
             errors={formErrors}
         />
         </div>
         <div className="text-center">
-            <button type="submit" className="btn btn-submit">Guardar</button>
+            <button ref={submitButtonRef} type="submit" className="btn btn-submit">Guardar</button>
         </div>
     </form>
     </div>

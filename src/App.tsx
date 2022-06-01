@@ -8,7 +8,7 @@ const App = () => {
       <header className='container row'>
         <div className='col-md-12'>
           <img src={logo} className="rounded logo" alt="logo"/>
-        </div>
+        </div> 
       </header>
       <Form/>
     </div>
