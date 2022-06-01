@@ -180,7 +180,7 @@ const Form = () => {
             set={handleInputChange} 
             errors={formErrors}
             type={'tel'}
-        />
+            />
         </div>
         <div className="col-sm-6 col-lg-4">
         <Textfield 
@@ -188,6 +188,7 @@ const Form = () => {
             placeholder={'Teléfono fijo'} 
             set={handleInputChange} 
             errors={formErrors}
+            type={'tel'}
         />
         </div>
         <div className="col-lg-4">
