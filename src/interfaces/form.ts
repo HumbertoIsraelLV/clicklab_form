@@ -8,7 +8,7 @@ export interface FormValuesInterface {
   correo?: string,
   t_examen?: string,
   enterado?: string,
-  campaña?: string,
+  campana?: string,
   agente?: string,
   seguimiento?: string,
   comen?: string,

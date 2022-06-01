@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import axios from "axios";
 import validator from 'validator';
+import Swal from 'sweetalert2';
 
 import Textfield from '../../components/textfield/textfield';
 import Select from '../../components/select/select';
@@ -20,7 +21,7 @@ const Form = () => {
     correo: '',
     t_examen: '',
     enterado: '',
-    campaña: '',
+    campana: '',
     agente: '',
     seguimiento: 'false',
     comen: '',
@@ -42,19 +43,20 @@ const Form = () => {
     correo,
     t_examen,
     enterado,
-    campaña,
-    // agente,
+    campana,
+    agente,
     // seguimiento,
     // comen,
   }: any = formValues;
 
   const submitForm = (event: any) => {
     event.preventDefault();
+    submitButtonRef.current?.blur();
+    
     if(!isFormValid()) return;
     sendFormData();
     event.target.reset();    
-    submitButtonRef.current?.blur();
-    setFormValues(initFormValues);    
+    setFormValues(initFormValues);  
   }
 
   const isFormValid = () => {
@@ -113,8 +115,12 @@ const Form = () => {
       errors['enterado'] = 'medio de difusión requerido';
       isValid = false;
     }
-    if(validator.isEmpty(campaña)){
-      errors['campaña'] = 'campaña requerida';
+    if(validator.isEmpty(campana)){
+      errors['campana'] = 'campaña requerida';
+      isValid = false;
+    }
+    if(validator.isEmpty(agente)){
+      errors['agente'] = 'agente requerido';
       isValid = false;
     }
     setFormErrors(errors);
@@ -129,12 +135,18 @@ const Form = () => {
     axios
       .post('http://elpuntoyseguido.com.mx:3006/capturardatos', {idllamada: idLlamada, tel, ...formValues})
       .then((response) => {
-        alert('Formulario enviado');
-        // console.log(response);
+        Swal.fire({
+          icon: 'success',
+          text: 'Información enviada correctamente',
+        });
         
       }).catch(error => {
-        console.log('Error at sending data');
-        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          text: 'Error al enviar la información',
+        });
+        // console.log('Error at sending data');
+        // console.log(error);
       });
   }
 
@@ -241,7 +253,7 @@ const Form = () => {
         </div>
         <div className="col-lg-4">
         <Select 
-            name={'campaña'} 
+            name={'campana'} 
             label={'Campaña'} 
             options={[
             'ClickLab-Head Land',
@@ -255,6 +267,7 @@ const Form = () => {
           name={'agente'} 
           label={'Agente'} 
           options={[
+            new URLSearchParams(window.location.search).get('agt')?? 'Ninguno',
           ]}            
           set={handleInputChange}
           errors={formErrors}
