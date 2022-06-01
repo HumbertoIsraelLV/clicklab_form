@@ -122,14 +122,18 @@ const Form = () => {
   }
 
   const sendFormData = () => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const idLlamada = queryParams.get("idllamada");
+    const tel = queryParams.get("tel");
+
     axios
-      .post('http://elpuntoyseguido.com.mx:3006/capturardatos', formValues)
+      .post('http://elpuntoyseguido.com.mx:3006/capturardatos', {idllamada: idLlamada, tel, ...formValues})
       .then((response) => {
         alert('Formulario enviado');
-        console.log(response);
+        // console.log(response);
         
       }).catch(error => {
-        console.log('Error at updating');
+        console.log('Error at sending data');
         console.log(error);
       });
   }
